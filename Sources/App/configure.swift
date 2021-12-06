@@ -18,6 +18,13 @@ public func configure(_ app: Application) throws {
 
     app.views.use(.leaf)
     
+    app.migrations.add(CreateDummy())
+    
+    // log to .debug level. (you can see when the migration happens)
+    app.logger.logLevel = .debug
+    
+    try app.autoMigrate().wait()
+    
     // register routes
     try routes(app)
 }

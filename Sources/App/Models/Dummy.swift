@@ -20,15 +20,13 @@ final class Dummy: Content, Model {
     
     @Timestamp(key: "created_at", on: .create)
         var createdAt: Date?
-
-    @Timestamp(key: "updated_at", on: .update)
-    var updatedAt: Date?
     
     init() {}
     
-    init(id: UUID?, value: String, createdAt: Date = Date.now) {
+    init(id: UUID?, value: String) {
         self.id = id
         self.value = value
+        self.createdAt = Date.now
     }
 }
 
