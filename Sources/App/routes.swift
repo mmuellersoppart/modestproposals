@@ -10,4 +10,6 @@ func routes(_ app: Application) throws {
         return "Hello, world!"
     }
 
+    let dummiesController = DummiesController()
+    try app.register(collection: dummiesController)
 }
