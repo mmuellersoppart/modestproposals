@@ -9,34 +9,30 @@
 import XCTVapor
 
 final class DummyTests: XCTestCase {
-    func testDummyCanBeRetrievedFromAPI() async throws {
-        
-        let expectedValue = "Sup Sup Sup"
-        
-        let app = Application(.testing)
-        
-        defer { app.shutdown() }
-        
-        try configure(app)
-        
-        try await app.autoRevert()
-        try await app.autoMigrate()
-        
-        let dummy = Dummy(id: UUID(), value: expectedValue)
-        try await dummy.save(on: app.db)
-        try await Dummy(id: UUID(), value: "I am not saying hello").save(on: app.db)
-        
-        try app.test(.GET, "/api/dummies", afterResponse: { response in
-            
-            XCTAssertEqual(response.status, .ok)
-            
-            let dummies = try response.content.decode([Dummy].self)
-            
-            // be wary of the sort placed on the get all 
-            XCTAssertEqual(dummies.count, 2)
-            XCTAssertEqual(dummies[1].value, expectedValue)
-            XCTAssertEqual(dummies[1].id, dummy.id)
-        })
-        
+    let dummyValue = "test test"
+    let dummyURI = "/api/dummies"
+    var app: Application!
+    
+    override func setUpWithError() throws {
+        app = try Application.testable()
     }
+    
+    override func tearDownWithError() throws {
+        app.shutdown()
+    }
+    
+    func testUsersCanBeRetrievedFromAPI() async throws {
+        let dummy = try await Dummy.create(value: "t1", on: app.db)
+        _ = try await Dummy.create(value: "t2", on: app.db)
+        
+        try app.test(.GET, dummyURI, afterResponse: { response in
+            XCTAssertEqual(response.status, .ok)
+            let users = try response.content.decode([Dummy].self)
+            
+            XCTAssertEqual(users.count, 2)
+            XCTAssertEqual(users[1].value, dummy.value)
+            XCTAssertEqual(users[1].id, dummy.id)
+        })
+    }
+    
 }
