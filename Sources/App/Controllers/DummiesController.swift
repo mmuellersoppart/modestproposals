@@ -17,11 +17,17 @@ struct DummiesController: RouteCollection {
     }
     
     func getAllHandler(_ req: Request) async throws -> [Dummy] {
-        try await Dummy.query(on: req.db).all()
+        try await Dummy.query(on: req.db).sort(\.$createdAt, .descending).all()
     }
     
     func createHandler(_ req: Request) async throws -> Response {
         let dummy = try req.content.decode(Dummy.self)
+        
+        let allDummies = try await getAllHandler(req)
+        
+        if allDummies.count >= 10 {
+            try await allDummies.last?.delete(on: req.db)
+        }
         
         try await dummy.save(on: req.db)
         
