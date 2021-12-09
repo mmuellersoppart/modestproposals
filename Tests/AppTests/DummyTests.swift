@@ -21,9 +21,9 @@ final class DummyTests: XCTestCase {
         app.shutdown()
     }
     
-    func testUsersCanBeRetrievedFromAPI() async throws {
-        let dummy = try await Dummy.create(value: "t1", on: app.db)
-        _ = try await Dummy.create(value: "t2", on: app.db)
+    func testUsersCanBeRetrievedFromAPI() throws {
+        let dummy = try Dummy.create(value: "t1", on: app.db)
+        _ = try Dummy.create(value: "t2", on: app.db)
         
         try app.test(.GET, dummyURI, afterResponse: { response in
             XCTAssertEqual(response.status, .ok)

@@ -10,12 +10,12 @@ import Fluent
 import Foundation
 
 extension Dummy {
-  static func create(
-    value: String = "test test",
-    on database: Database
-  ) async throws -> Dummy {
-    let dummy = Dummy(id: UUID(), value: value)
-    try await dummy.save(on: database)
-    return dummy
-  }
+    static func create(
+        value: String = "test test",
+        on database: Database
+    ) throws -> Dummy {
+        let dummy = Dummy(id: UUID(), value: value)
+        try dummy.save(on: database).wait()
+        return dummy
+    }
 }

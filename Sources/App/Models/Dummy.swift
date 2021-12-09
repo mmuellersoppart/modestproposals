@@ -26,7 +26,7 @@ final class Dummy: Content, Model {
     init(id: UUID?, value: String) {
         self.id = id
         self.value = value
-        self.createdAt = Date.now
+        self.createdAt = Date()
     }
 }
 
