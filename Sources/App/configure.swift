@@ -48,6 +48,13 @@ public func configure(_ app: Application) throws {
     app.views.use(.leaf)
     
     app.migrations.add(CreateDummy())
+
+    
+    let corsConfiguration = CORSMiddleware.Configuration(allowedOrigin: .all, allowedMethods: [.GET, .POST], allowedHeaders: [.accept]
+    )
+    let cors = CORSMiddleware(configuration: corsConfiguration)
+    
+    app.middleware.use(cors, at: .beginning)
     
     // log to .debug level. (you can see when the migration happens)
     app.logger.logLevel = .debug
