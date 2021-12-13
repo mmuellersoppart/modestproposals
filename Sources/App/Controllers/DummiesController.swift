@@ -20,7 +20,7 @@ struct DummiesController: RouteCollection {
         try await Dummy.query(on: req.db).sort(\.$createdAt, .descending).all()
     }
     
-    func createHandler(_ req: Request) async throws -> Response {
+    func createHandler(_ req: Request) async throws -> DummyResponse {
         let dummy = try req.content.decode(Dummy.self)
         
         let allDummies = try await getAllHandler(req)
@@ -31,7 +31,11 @@ struct DummiesController: RouteCollection {
         
         try await dummy.save(on: req.db)
         
-        return Response(status: HTTPResponseStatus.ok)
+        return DummyResponse(request: dummy)
     }
     
+    struct DummyResponse: Content {
+      let request: Dummy
+    }
+
 }
