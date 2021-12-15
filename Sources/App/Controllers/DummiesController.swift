@@ -20,8 +20,9 @@ struct DummiesController: RouteCollection {
         try await Dummy.query(on: req.db).sort(\.$createdAt, .descending).all()
     }
     
-    func createHandler(_ req: Request) async throws -> DummyResponse {
+    func createHandler(_ req: Request) async throws -> AllDummyResponse {
         let dummy = try req.content.decode(Dummy.self)
+        try await dummy.save(on: req.db)
         
         let allDummies = try await getAllHandler(req)
         
@@ -29,13 +30,15 @@ struct DummiesController: RouteCollection {
             try await allDummies.last?.delete(on: req.db)
         }
         
-        try await dummy.save(on: req.db)
-        
-        return DummyResponse(request: dummy)
+        return AllDummyResponse(request: allDummies)
     }
     
     struct DummyResponse: Content {
       let request: Dummy
+    }
+    
+    struct AllDummyResponse: Content {
+        let request: [Dummy]
     }
 
 }
