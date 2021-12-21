@@ -21,6 +21,10 @@ struct UsersController: RouteCollection {
     
     func createHandler(_ req: Request) async throws -> UserResponse {
         let user = try req.content.decode(User.self)
+        
+        // one way hash of the password
+        user.password = try Bcrypt.hash(user.password)
+        
         try await user.save(on: req.db)
         
         // TODO: set a max on users
