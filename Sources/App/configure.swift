@@ -48,8 +48,8 @@ public func configure(_ app: Application) throws {
     app.views.use(.leaf)
     
     app.migrations.add(CreateDummy())
+    app.migrations.add(CreateUser())
 
-    
     let corsConfiguration = CORSMiddleware.Configuration(allowedOrigin: .all, allowedMethods: [.GET, .POST], allowedHeaders: [.accept, .contentType, .origin, .accessControlAllowOrigin]
     )
     let cors = CORSMiddleware(configuration: corsConfiguration)

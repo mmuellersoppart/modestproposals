@@ -12,4 +12,7 @@ func routes(_ app: Application) throws {
 
     let dummiesController = DummiesController()
     try app.register(collection: dummiesController)
+    
+    let usersController = UsersController()
+    try app.register(collection: usersController)
 }
