@@ -13,6 +13,18 @@ struct UsersController: RouteCollection {
         
         usersRoutes.get(use: getAllHandler)
         usersRoutes.post(use: createHandler)
+        
+        let basicAuthMiddleware = User.authenticator()
+        let basicAuthGroup = usersRoutes.grouped(basicAuthMiddleware)
+        
+        basicAuthGroup.post("login", use: loginHandler)
+    }
+    
+    func loginHandler(_ req: Request) async throws -> Token {
+        let user = try req.auth.require(User.self)
+        let token = try Token.generate(for: user)
+        try await token.save(on: req.db)
+        return token
     }
     
     func getAllHandler(_ req: Request) async throws -> [User.Public] {
@@ -22,7 +34,9 @@ struct UsersController: RouteCollection {
     }
     
     func createHandler(_ req: Request) async throws -> UserPublicResponse {
-        let user = try req.content.decode(User.self)
+        
+//        let user = try req.content.decode(User.self)
+        let user = try req.auth.require(User.self)
         
         // one way hash of the password
         user.password = try Bcrypt.hash(user.password)
