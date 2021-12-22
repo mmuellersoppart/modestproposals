@@ -26,11 +26,12 @@ final class UserTests: XCTestCase {
         
         try app.test(.GET, dummyURI, afterResponse: { response in
             XCTAssertEqual(response.status, .ok)
-            let users = try response.content.decode([User].self)
+            let users = try response.content.decode([User.Public].self)
             
             XCTAssertEqual(users.count, 2)
             XCTAssertEqual(users[0].username, user.username)
             XCTAssertEqual(users[0].id, user.id)
+            // TODO: test for password not being there. 
         })
     }
     

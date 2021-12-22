@@ -15,11 +15,13 @@ struct UsersController: RouteCollection {
         usersRoutes.post(use: createHandler)
     }
     
-    func getAllHandler(_ req: Request) async throws -> [User] {
-        try await User.query(on: req.db).all()
+    func getAllHandler(_ req: Request) async throws -> [User.Public] {
+        let users = try await User.query(on: req.db).all()
+        let public_users = users.convertToPublic()
+        return public_users
     }
     
-    func createHandler(_ req: Request) async throws -> UserResponse {
+    func createHandler(_ req: Request) async throws -> UserPublicResponse {
         let user = try req.content.decode(User.self)
         
         // one way hash of the password
@@ -29,11 +31,11 @@ struct UsersController: RouteCollection {
         
         // TODO: set a max on users
         
-        return UserResponse(request: user)
+        return UserPublicResponse(request: user.convertToPublic())
     }
     
-    struct UserResponse: Content {
-        let request: User
+    struct UserPublicResponse: Content {
+        let request: User.Public
     }
     
 }
