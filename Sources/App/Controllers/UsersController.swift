@@ -12,7 +12,7 @@ struct UsersController: RouteCollection {
         let usersRoutes = routes.grouped("api", "users")
         
         usersRoutes.get(use: getAllHandler)
-        usersRoutes.post(use: createHandler)
+        usersRoutes.post(use: createHandler)  // basic authentication inside
         
         let basicAuthMiddleware = User.authenticator()
         let basicAuthGroup = usersRoutes.grouped(basicAuthMiddleware)
