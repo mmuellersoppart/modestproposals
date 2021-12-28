@@ -50,6 +50,7 @@ public func configure(_ app: Application) throws {
     app.migrations.add(CreateDummy())
     app.migrations.add(CreateUser())
     app.migrations.add(CreateToken())
+    app.migrations.add(CreateAdminUser())
 
     let corsConfiguration = CORSMiddleware.Configuration(allowedOrigin: .all, allowedMethods: [.GET, .POST], allowedHeaders: [.accept, .contentType, .origin, .accessControlAllowOrigin]
     )

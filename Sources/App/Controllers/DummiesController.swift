@@ -12,8 +12,13 @@ struct DummiesController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let dummiesRoutes = routes.grouped("api", "dummies")
         
+        let tokenAuthMiddleware = Token.authenticator()
+        let guardAuthMiddleware = User.guardMiddleware()
+        
+        let tokenAuthGroup = dummiesRoutes.grouped(tokenAuthMiddleware, guardAuthMiddleware)
+        
         dummiesRoutes.get(use: getAllHandler)
-        dummiesRoutes.post(use: createHandler)
+        tokenAuthGroup.post(use: createHandler)
     }
     
     func getAllHandler(_ req: Request) async throws -> [Dummy] {
@@ -34,11 +39,11 @@ struct DummiesController: RouteCollection {
     }
     
     struct DummyResponse: Content {
-      let request: Dummy
+        let request: Dummy
     }
     
     struct AllDummyResponse: Content {
         let request: [Dummy]
     }
-
+    
 }

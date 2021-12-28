@@ -12,6 +12,8 @@ struct UsersController: RouteCollection {
         let usersRoutes = routes.grouped("api", "users")
         
         usersRoutes.get(use: getAllHandler)
+        usersRoutes.delete(":userID", use: deleteUserHandler)
+       
         usersRoutes.post(use: createHandler)  // basic authentication inside
         
         let basicAuthMiddleware = User.authenticator()
@@ -21,6 +23,7 @@ struct UsersController: RouteCollection {
     }
     
     func loginHandler(_ req: Request) async throws -> Token {
+        req.logger.debug("here")
         let user = try req.auth.require(User.self)
         let token = try Token.generate(for: user)
         try await token.save(on: req.db)
@@ -46,6 +49,12 @@ struct UsersController: RouteCollection {
         // TODO: set a max on users
         
         return UserPublicResponse(request: user.convertToPublic())
+    }
+    
+    func deleteUserHandler(_ req: Request) async throws -> UserPublicResponse {
+        let user = try await User.find(req.parameters.get("userID"), on: req.db)
+        try await user?.delete(on: req.db)
+        return UserPublicResponse(request: user?.convertToPublic() ?? User().convertToPublic())
     }
     
     struct UserPublicResponse: Content {
