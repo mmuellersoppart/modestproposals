@@ -8,6 +8,7 @@
 @testable import App
 import Fluent
 import Foundation
+import Vapor
 
 extension Dummy {
     static func create(
