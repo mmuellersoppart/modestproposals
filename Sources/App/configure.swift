@@ -57,6 +57,7 @@ public func configure(_ app: Application) throws {
     let cors = CORSMiddleware(configuration: corsConfiguration)
     
     app.middleware.use(cors, at: .beginning)
+    app.middleware.use(app.sessions.middleware)
     
     // log to .debug level. (you can see when the migration happens)
     app.logger.logLevel = .debug
