@@ -10,7 +10,6 @@ import Vapor
 struct UsersController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let basicAuthMiddleware = User.authenticator()
-        let tokenAuthMiddleware = Token.authenticator()
         
         // open apis, no permissions needed
         let usersRoutes = routes.grouped("api", "users")
@@ -37,7 +36,7 @@ struct UsersController: RouteCollection {
     }
     
     func loginHandler(_ req: Request) async throws -> Response {
-        let user = try req.auth.require(User.self)
+        _ = try req.auth.require(User.self)
         return Response(status: .ok)
     }
     

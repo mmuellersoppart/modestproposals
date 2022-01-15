@@ -11,14 +11,14 @@ public func configure(_ app: Application) throws {
     let databaseName: String
     let databasePort: Int
     if (app.environment == .testing) {
-        databaseName = "vapor-test"
+        databaseName = "a_modest_db_test"
         if let testPort = Environment.get("DATABASE_PORT") {
             databasePort = Int(testPort) ?? 5433
         } else {
             databasePort = 5433
         }
     } else {
-        databaseName = "a_modest_database"
+        databaseName = "a_modest_db"
         databasePort = 5432
     }
     

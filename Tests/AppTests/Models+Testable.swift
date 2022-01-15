@@ -10,17 +10,6 @@ import Fluent
 import Foundation
 import Vapor
 
-extension Dummy {
-    static func create(
-        value: String = "test test",
-        on database: Database
-    ) throws -> Dummy {
-        let dummy = Dummy(id: UUID(), value: value)
-        try dummy.save(on: database).wait()
-        return dummy
-    }
-}
-
 extension User {
     static func create(
         email: String = "u1@mail.com",
