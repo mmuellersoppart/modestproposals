@@ -43,19 +43,17 @@ final class User: Model, Content {
     final class Public: Content {
         var id: UUID?
         var username: String
-        var email: String
         
-        init(id: UUID?, username: String, email: String) {
+        init(id: UUID?, username: String) {
             self.id = id
             self.username = username
-            self.email = email
         }
     }
 }
 
 extension User {
     func convertToPublic() -> User.Public {
-        return User.Public(id: id, username: username, email: email)
+        return User.Public(id: id, username: username)
     }
 }
 

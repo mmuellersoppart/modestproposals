@@ -14,6 +14,8 @@ struct UsersController: RouteCollection {
         
         // open apis, no permissions needed
         let usersRoutes = routes.grouped("api", "users")
+        // See all users
+        usersRoutes.get(use: getAllHandler)
         // Register
         usersRoutes.post("register", use: createHandler)
         
@@ -22,25 +24,16 @@ struct UsersController: RouteCollection {
         // Login
         basicProtectedAuthGroup.post("login", use: loginHandler)
         
-        
-        // need to be logged in, or have a session going
+        // need to be logged in, or have a session going else
+        // you'll be redirected
         let loginProtectedAuthGroup = usersRoutes.grouped(
-            basicAuthMiddleware,
-            tokenAuthMiddleware,
             User.credentialsAuthenticator()
         )
-
-        //loginProtectedAuthGroup.get(use: getAllHandler)
-        usersRoutes.get(use: getAllHandler)
-        loginProtectedAuthGroup.delete(":userID", use: deleteUserHandler)
         
         // TODO: make admin permissions
         usersRoutes.delete("all", use: deleteAllUsersHandler)
+        loginProtectedAuthGroup.delete(":userID", use: deleteUserHandler)
         
-    }
-    
-    func getSillyStringHandler(_ req: Request) -> String {
-        return "I'm silly"
     }
     
     func loginHandler(_ req: Request) async throws -> Response {

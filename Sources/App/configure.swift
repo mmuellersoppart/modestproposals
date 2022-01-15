@@ -18,7 +18,7 @@ public func configure(_ app: Application) throws {
             databasePort = 5433
         }
     } else {
-        databaseName = "vapor_database"
+        databaseName = "a_modest_database"
         databasePort = 5432
     }
     
@@ -47,7 +47,6 @@ public func configure(_ app: Application) throws {
 
     app.views.use(.leaf)
     
-    app.migrations.add(CreateDummy())
     app.migrations.add(CreateUser())
     app.migrations.add(CreateToken())
     app.migrations.add(CreateAdminUser())
