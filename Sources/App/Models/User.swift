@@ -38,6 +38,8 @@ final class User: Model, Content {
         self.password = password
     }
     
+    // classic - classes within classes
+    // A subset of user information that we could share public..ly.
     final class Public: Content {
         var id: UUID?
         var username: String

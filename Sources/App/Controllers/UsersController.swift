@@ -16,7 +16,6 @@ struct UsersController: RouteCollection {
         let usersRoutes = routes.grouped("api", "users")
         // Register
         usersRoutes.post("register", use: createHandler)
-        usersRoutes.delete("all", use: deleteAllUsersHandler)
         
         // basic authentication
         let basicProtectedAuthGroup = usersRoutes.grouped(basicAuthMiddleware, User.sessionAuthenticator())
@@ -35,11 +34,8 @@ struct UsersController: RouteCollection {
         usersRoutes.get(use: getAllHandler)
         loginProtectedAuthGroup.delete(":userID", use: deleteUserHandler)
         
-        // TODO: disposable
-        // dummy tests - session authentication
-        let protectedCredentialAuthGroup = usersRoutes.grouped(User.sessionAuthenticator(), User.redirectMiddleware(path: "/hello"))
-        
-        protectedCredentialAuthGroup.get("silly", use: getSillyStringHandler)
+        // TODO: make admin permissions
+        usersRoutes.delete("all", use: deleteAllUsersHandler)
         
     }
     

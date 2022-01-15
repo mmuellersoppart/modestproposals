@@ -60,7 +60,7 @@ public func configure(_ app: Application) throws {
     
     // using sessions
     app.middleware.use(app.sessions.middleware)
-    app.middleware.use(User.sessionAuthenticator())
+    app.middleware.use(User.asyncSessionAuthenticator())
     
     // log to .debug level. (you can see when the migration happens)
     app.logger.logLevel = .debug
