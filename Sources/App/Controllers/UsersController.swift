@@ -14,36 +14,53 @@ struct UsersController: RouteCollection {
         
         // open apis, no permissions needed
         let usersRoutes = routes.grouped("api", "users")
+        // Register
+        usersRoutes.post("register", use: createHandler)
+        usersRoutes.delete("all", use: deleteAllUsersHandler)
         
-        usersRoutes.post(use: createHandler)
-        
-        // login routes
-        let loginProtectedAuthGroup = usersRoutes.grouped(basicAuthMiddleware, tokenAuthMiddleware)
-
-        loginProtectedAuthGroup.get(use: getAllHandler)
-        loginProtectedAuthGroup.delete(":userID", use: deleteUserHandler)
-//        loginProtectedAuthGroup.post(use: createHandler)
-//
-        // basic auth
-        let basicProtectedAuthGroup = usersRoutes.grouped(basicAuthMiddleware)
-        
+        // basic authentication
+        let basicProtectedAuthGroup = usersRoutes.grouped(basicAuthMiddleware, User.sessionAuthenticator())
+        // Login
         basicProtectedAuthGroup.post("login", use: loginHandler)
+        
+        
+        // need to be logged in, or have a session going
+        let loginProtectedAuthGroup = usersRoutes.grouped(
+            basicAuthMiddleware,
+            tokenAuthMiddleware,
+            User.credentialsAuthenticator()
+        )
+
+        //loginProtectedAuthGroup.get(use: getAllHandler)
+        usersRoutes.get(use: getAllHandler)
+        loginProtectedAuthGroup.delete(":userID", use: deleteUserHandler)
+        
+        // TODO: disposable
+        // dummy tests - session authentication
+        let protectedCredentialAuthGroup = usersRoutes.grouped(User.sessionAuthenticator(), User.redirectMiddleware(path: "/hello"))
+        
+        protectedCredentialAuthGroup.get("silly", use: getSillyStringHandler)
+        
     }
     
-    func loginHandler(_ req: Request) async throws -> Token {
+    func getSillyStringHandler(_ req: Request) -> String {
+        return "I'm silly"
+    }
+    
+    func loginHandler(_ req: Request) async throws -> Response {
         let user = try req.auth.require(User.self)
-        let token = try Token.generate(for: user)
-        try await token.save(on: req.db)
-        return token
+        return Response(status: .ok)
     }
     
     func getAllHandler(_ req: Request) async throws -> [User.Public] {
+//        let _ = try req.auth.require(User.self)
         let users = try await User.query(on: req.db).all()
         let public_users = users.convertToPublic()
         return public_users
     }
     
-    func createHandler(_ req: Request) async throws -> UserPublicResponse {
+    // Register users
+    func createHandler(_ req: Request) async throws -> Response {
         
         let created_user = try req.content.decode(User.self)
         
@@ -51,17 +68,22 @@ struct UsersController: RouteCollection {
         
         try await created_user.save(on: req.db)
         
-        
+        req.auth.login(created_user)
         
         // TODO: set a max on users
         
-        return UserPublicResponse(request: created_user.convertToPublic())
+        return Response(status: .ok)
     }
     
     func deleteUserHandler(_ req: Request) async throws -> UserPublicResponse {
         let user = try await User.find(req.parameters.get("userID"), on: req.db)
         try await user?.delete(on: req.db)
         return UserPublicResponse(request: user?.convertToPublic() ?? User().convertToPublic())
+    }
+    
+    func deleteAllUsersHandler(_ req: Request) async throws -> Response {
+        let _ = try await User.query(on: req.db).all().delete(on: req.db)
+        return Response(status: .ok)
     }
     
     struct UserPublicResponse: Content {

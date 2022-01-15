@@ -52,12 +52,15 @@ public func configure(_ app: Application) throws {
     app.migrations.add(CreateToken())
     app.migrations.add(CreateAdminUser())
 
-    let corsConfiguration = CORSMiddleware.Configuration(allowedOrigin: .all, allowedMethods: [.GET, .POST], allowedHeaders: [.accept, .contentType, .origin, .accessControlAllowOrigin]
+    let corsConfiguration = CORSMiddleware.Configuration(allowedOrigin: .all, allowedMethods: [.GET, .POST], allowedHeaders: [.accept, .contentType, .origin, .accessControlAllowOrigin, .authorization]
     )
     let cors = CORSMiddleware(configuration: corsConfiguration)
     
     app.middleware.use(cors, at: .beginning)
+    
+    // using sessions
     app.middleware.use(app.sessions.middleware)
+    app.middleware.use(User.sessionAuthenticator())
     
     // log to .debug level. (you can see when the migration happens)
     app.logger.logLevel = .debug
