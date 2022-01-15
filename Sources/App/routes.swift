@@ -3,14 +3,10 @@ import Vapor
 
 func routes(_ app: Application) throws {
 
-    let usersController = UsersController()
-    try app.register(collection: usersController)
-
-    // Sanity Check Routes
+    try app.register(collection: UsersController())
+    try app.register(collection: WebsiteController())
     
-    app.get { req in
-        return req.view.render("index", ["title": "Hello Vapor!"])
-    }
+    // Sanity Check Routes
 
     app.get("hello") { req -> String in
         return "Hello, world!"

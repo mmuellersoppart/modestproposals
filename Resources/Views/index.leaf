@@ -1,12 +1,11 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
+#extend("base"):
+    #export("content"):
+        <!-- 3 -->
+        #if(isLoggedIn):
+            <h1>Hello World</h1>
+        #else:
+            <h1>Please login</h1>
+        #endif
+    #endexport
+#endextend
 
-  <title>#(title)</title>
-</head>
-
-<body>
-  <h1>#(title)</h1>
-</body>
-</html>
