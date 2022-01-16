@@ -23,6 +23,8 @@ struct WebsiteController: RouteCollection {
         )
         
         basicAuthRoutes.post("login", use: loginPostHandler)
+        basicAuthRoutes.get("profile", use: profileHandler)
+        basicAuthRoutes.post("logout", use: logoutHandler)
     }
     
     func registerHandler(_ req: Request) async throws -> View {
@@ -51,6 +53,17 @@ struct WebsiteController: RouteCollection {
       req.auth.login(user)
         // 7
       return req.redirect(to: "/")
+    }
+        
+    func profileHandler(_ req: Request) async throws -> View {
+        // must be logged in to logout
+        let user = try req.auth.require(User.self)
+        
+        let baseContext = BaseContext(title: "Profile", isLoggedIn: true)
+        
+        let context = ProfileContext(baseContext: baseContext, user: user)
+        
+        return try await req.view.render("profile", context)
     }
     
     func indexHandler(_ req: Request) async throws -> View {
@@ -113,6 +126,14 @@ struct WebsiteController: RouteCollection {
         
     }
     
+    func logoutHandler(_ req: Request) -> Response {
+      // 2
+      req.auth.logout(User.self)
+      // 3
+      return req.redirect(to: "/")
+    }
+
+    
 }
 
 // Log in
@@ -132,7 +153,6 @@ struct LoginData: Content {
 }
 
 // Register
-
 struct RegisterContext: Encodable {
     let baseContext: BaseContext
 }
@@ -151,11 +171,18 @@ struct IndexContext: Encodable {
     let homepageProposals: [ProposalAndCreator]
 }
 
-//
+// Index struct
 struct ProposalAndCreator: Encodable {
     let proposalTitle: String
     let creatorUsername: String
 }
+
+// Profile
+struct ProfileContext: Encodable {
+    let baseContext: BaseContext
+    let user: User
+}
+
 
 // Context data needed on every page
 struct BaseContext: Encodable {

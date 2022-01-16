@@ -1,0 +1,16 @@
+<!-- 1 -->
+#extend("base"):
+  #export("content"):
+    
+      <h1>Hello #(user.username)</h1>
+    
+      <!-- 2 -->
+      <form class="form-inline" action="/logout" method="POST">
+        <!-- 3 -->
+        <input class="nav-link btn btn-secondary mr-sm-2"
+         type="submit" value="Log out">
+      </form>
+
+  #endexport
+#endextend
+  
