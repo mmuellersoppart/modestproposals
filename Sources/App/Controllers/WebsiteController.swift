@@ -17,11 +17,11 @@ struct WebsiteController: RouteCollection {
         routes.post("register", use: registerPostHandler)
 
 //        routes.get("login", use: loginHandler)
-//        
-//        let basicAuthRoutes = routes.grouped(
-//            User.credentialsAuthenticator()
-//        )
-//        
+        
+        let basicAuthRoutes = routes.grouped(
+            User.credentialsAuthenticator()
+        )
+        
 //        basicAuthRoutes.post("login", use: loginPostHandler)
     }
     
@@ -54,9 +54,10 @@ struct WebsiteController: RouteCollection {
         
         let isLoggedIn = req.auth.has(User.self)
         
-        req.logger.info("\(isLoggedIn): Getting index." )
+        let proposals = try await Proposal.query(on: req.db).all()
         
-        let context = IndexContext(title: "Homepage", isLoggedIn: isLoggedIn)
+        let context = IndexContext(title: "Homepage", isLoggedIn: isLoggedIn, homepageProposals: proposals)
+//        let context = IndexContext(title: "Homepage", isLoggedIn: isLoggedIn)
         return try await req.view.render("index", context)
     }
     
@@ -95,4 +96,6 @@ struct RegisterData: Content {
 struct IndexContext: Encodable {
     let title: String
     let isLoggedIn: Bool
+    
+    let homepageProposals: [Proposal]
 }

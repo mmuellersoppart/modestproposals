@@ -2,7 +2,12 @@
     #export("content"):
         <!-- 3 -->
         #if(isLoggedIn):
-            <h1>Hello World</h1>
+            <ul>
+                #for(proposal in homepageProposals):
+                    <li>#(proposal.title)</li>
+                #endfor
+                
+            </ul>
         #else:
             <h1>Please login</h1>
         #endif

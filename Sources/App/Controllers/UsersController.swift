@@ -58,8 +58,6 @@ struct UsersController: RouteCollection {
         
         req.auth.login(created_user)
         
-        // TODO: set a max on users
-        
         return Response(status: .ok)
     }
     

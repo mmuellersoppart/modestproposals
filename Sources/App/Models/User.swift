@@ -12,8 +12,11 @@ import Fluent
 final class User: Model, Content {
     static let schema: String = "users"
     
-    @ID
+    @ID(key: .id)
     var id: UUID?
+    
+    @Children(for: \Proposal.$user)
+    var proposals: [Proposal]
     
     @Field(key: "username")
     var username: String
