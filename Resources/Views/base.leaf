@@ -28,6 +28,7 @@
         <!-- 5 -->
         <ul class="navbar-nav mr-auto">
           <!-- 6 -->
+          #if(!baseContext.isLoggedIn):
           <li class="nav-item">
               <a href="/register" class="nav-link">Register</a>
           </li>
@@ -36,6 +37,8 @@
             #if(title == "Home page"): active #endif">
               <a href="/login" class="nav-link">Login</a>
           </li>
+          #endif
+          
           
           <li class="nav-item">
               <a href="/secret" class="nav-link">Protected Link</a>

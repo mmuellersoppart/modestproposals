@@ -63,7 +63,7 @@ struct WebsiteController: RouteCollection {
         
         let context = IndexContext(baseContext: baseContext, homepageProposals: proposals
         )
-//        let context = IndexContext(title: "Homepage", isLoggedIn: isLoggedIn)
+
         return try await req.view.render("index", context)
     }
     

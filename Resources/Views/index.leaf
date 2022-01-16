@@ -1,7 +1,7 @@
 #extend("base"):
     #export("content"):
         <!-- 3 -->
-        #if(isLoggedIn):
+        #if(baseContext.isLoggedIn):
             <ul>
                 #for(proposal in homepageProposals):
                     <li>#(proposal.title)</li>
