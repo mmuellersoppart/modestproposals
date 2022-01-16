@@ -26,7 +26,10 @@ struct WebsiteController: RouteCollection {
     }
     
     func registerHandler(_ req: Request) async throws -> View {
-      let context = RegisterContext()
+    
+      let baseContext = BaseContext(title: "Register", isLoggedIn: false)
+        
+      let context = RegisterContext(baseContext: baseContext)
       return try await req.view.render("register", context)
     }
     
@@ -56,7 +59,10 @@ struct WebsiteController: RouteCollection {
         
         let proposals = try await Proposal.query(on: req.db).all()
         
-        let context = IndexContext(title: "Homepage", isLoggedIn: isLoggedIn, homepageProposals: proposals)
+        let baseContext = BaseContext(title: "Homepage", isLoggedIn: isLoggedIn)
+        
+        let context = IndexContext(baseContext: baseContext, homepageProposals: proposals
+        )
 //        let context = IndexContext(title: "Homepage", isLoggedIn: isLoggedIn)
         return try await req.view.render("index", context)
     }
@@ -81,7 +87,7 @@ struct LoginData: Content {
 // Register
 
 struct RegisterContext: Encodable {
-  let title = "Register"
+    let baseContext: BaseContext
 }
 
 struct RegisterData: Content {
@@ -94,8 +100,13 @@ struct RegisterData: Content {
 // Index
 
 struct IndexContext: Encodable {
-    let title: String
-    let isLoggedIn: Bool
+    let baseContext: BaseContext
     
     let homepageProposals: [Proposal]
+}
+
+// Context data needed on every page
+struct BaseContext: Encodable {
+    let title: String
+    let isLoggedIn: Bool
 }
