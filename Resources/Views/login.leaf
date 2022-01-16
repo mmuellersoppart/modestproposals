@@ -1,0 +1,23 @@
+#extend("base"):
+  #export("content"):
+    <h1>#(title)</h1>
+    
+    #if(loginError):
+      <div class="alert alert-danger" role="alert">
+        User authentication error. Either your username or password was invalid.
+      </div>
+    #endif
+    
+    <form method="POST" action="/login">
+    <label for="username">Username</label>
+    <input type="text" id="username" placeholder="Username" name="username" autocomplete="username" required autofocus>
+    <label for="password">Password</label>
+    <input type="password" id="password" placeholder="Password" name="password" autocomplete="current-password" required>
+    <input type="submit" value="Sign In">
+    </form>
+    
+    </form>
+  #endexport
+#endextend
+  
+

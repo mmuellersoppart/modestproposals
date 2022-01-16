@@ -16,13 +16,13 @@ struct WebsiteController: RouteCollection {
         routes.get("register", use: registerHandler)
         routes.post("register", use: registerPostHandler)
 
-//        routes.get("login", use: loginHandler)
+        routes.get("login", use: loginHandler)
         
         let basicAuthRoutes = routes.grouped(
             User.credentialsAuthenticator()
         )
         
-//        basicAuthRoutes.post("login", use: loginPostHandler)
+        basicAuthRoutes.post("login", use: loginPostHandler)
     }
     
     func registerHandler(_ req: Request) async throws -> View {
@@ -59,22 +59,69 @@ struct WebsiteController: RouteCollection {
         
         let proposals = try await Proposal.query(on: req.db).all()
         
+        var creators = [User]()
+        for proposal in proposals {
+            let user = try await proposal.$user.get(on: req.db)
+            creators.append(user)
+        }
+        
+        let zipped = zip(proposals, creators)
+        
+        var proposalAndCreators = [ProposalAndCreator]()
+        for combo in zipped {
+            let proposalAndCreator = ProposalAndCreator(
+                proposalTitle: combo.0.title,
+                creatorUsername: combo.1.username
+            )
+            proposalAndCreators.append(proposalAndCreator)
+        }
+        
         let baseContext = BaseContext(title: "Homepage", isLoggedIn: isLoggedIn)
         
-        let context = IndexContext(baseContext: baseContext, homepageProposals: proposals
+        let context = IndexContext(baseContext: baseContext, homepageProposals: proposalAndCreators
         )
 
         return try await req.view.render("index", context)
+    }
+    
+    
+    func loginHandler(_ req: Request) async throws -> View {
+        let baseContext = BaseContext(title: "Login", isLoggedIn: false)
+        let context: LoginContext
+        
+        if let error = req.query[Bool.self, at: "error"], error {
+            context = LoginContext(baseContext: baseContext, loginError: true)
+        } else {
+            context = LoginContext(baseContext: baseContext)
+        }
+        
+        return try await req.view.render("login", context)
+    }
+    
+    func loginPostHandler(_ req: Request) async throws -> Response {
+         
+        
+        do {
+            let user = try req.auth.require(User.self)
+            req.auth.login(user)
+            return req.redirect(to: "/")
+        } catch {
+            let baseContext = BaseContext(title: "Login", isLoggedIn: false)
+            let context = LoginContext(baseContext: baseContext, loginError: true)
+            return try await req.view.render("login", context).encodeResponse(for: req)
+        }
+        
     }
     
 }
 
 // Log in
 struct LoginContext: Encodable {
-    let title = "Log In"
+    let baseContext: BaseContext
     let loginError: Bool
     
-    init(loginError: Bool = false) {
+    init(baseContext: BaseContext, loginError: Bool = false) {
+        self.baseContext = baseContext
         self.loginError = loginError
     }
 }
@@ -98,11 +145,16 @@ struct RegisterData: Content {
 }
 
 // Index
-
 struct IndexContext: Encodable {
     let baseContext: BaseContext
     
-    let homepageProposals: [Proposal]
+    let homepageProposals: [ProposalAndCreator]
+}
+
+//
+struct ProposalAndCreator: Encodable {
+    let proposalTitle: String
+    let creatorUsername: String
 }
 
 // Context data needed on every page
