@@ -25,6 +25,24 @@ struct WebsiteController: RouteCollection {
         basicAuthRoutes.post("login", use: loginPostHandler)
         basicAuthRoutes.get("profile", use: profileHandler)
         basicAuthRoutes.post("logout", use: logoutHandler)
+        
+        basicAuthRoutes.get("propose", use: proposeHandler)
+        basicAuthRoutes.post("propose", use: proposePostHandler)
+        
+        basicAuthRoutes.get("proposal", ":proposal_id", use: proposalHandler)
+    }
+    
+    func proposalHandler(_ req: Request) async throws -> View {
+      
+        let proposal: Proposal = try await Proposal.find(req.parameters.get("proposal_id"), on: req.db)!
+        let creator = try await User.find(proposal.$user.id, on: req.db)!
+        
+        // TODO: handle logged in and not logged in
+        let baseContext = BaseContext(title: "Proposal Details", isLoggedIn: false)
+        let context = ProposalContext(baseContext: baseContext, proposal: proposal, user: creator)
+        
+        return try await req.view.render("proposal", context)
+        
     }
     
     func registerHandler(_ req: Request) async throws -> View {
@@ -63,7 +81,53 @@ struct WebsiteController: RouteCollection {
         
         let context = ProfileContext(baseContext: baseContext, user: user)
         
-        return try await req.view.render("profile", context)
+        return try await req.view.render("user_profile", context)
+    }
+    
+    func proposeHandler(_ req: Request) async throws -> View {
+        
+        let user = try req.auth.require(User.self)
+        
+        let baseContext = BaseContext(title: "Propose", isLoggedIn: true)
+        let context = ProposeContext(baseContext: baseContext)
+        
+        return try await req.view.render("propose", context)
+    }
+    
+    func proposePostHandler(_ req: Request) async throws -> Response {
+        
+        let user = try req.auth.require(User.self)
+        let data = try req.content.decode(ProposeData.self)
+        
+        // get data from link
+        let link = data.link
+        
+        // TODO: check if link is allowed
+        
+        let url = URL(string: link)!
+        
+        let (url_data, response) = try await URLSession.shared.data(from: url)
+    
+        // see if response is good
+        guard let httpRequest = response as? HTTPURLResponse,
+              httpRequest.statusCode == 200 else {
+                  // throw error
+                  // TODO: handle error
+                  throw Abort(.badRequest)
+              }
+        
+        // check if file data is good
+        guard let markdown = String(data: url_data, encoding: .utf8) else {
+            // throw error
+            // TODO: do better
+            throw Abort(.processing)
+        }
+        
+        let proposal = Proposal(id: UUID(), userID: user.id!, title: data.title, description: data.description, link: data.link, markdown: markdown)
+        
+        try await proposal.save(on: req.db)
+   
+        return req.redirect(to: "/")
     }
     
     func indexHandler(_ req: Request) async throws -> View {
@@ -96,7 +160,6 @@ struct WebsiteController: RouteCollection {
 
         return try await req.view.render("index", context)
     }
-    
     
     func loginHandler(_ req: Request) async throws -> View {
         let baseContext = BaseContext(title: "Login", isLoggedIn: false)
@@ -162,6 +225,25 @@ struct RegisterData: Content {
   let email: String
   let password: String
   let confirmPassword: String
+}
+
+// Propose
+struct ProposeContext: Encodable {
+    let baseContext: BaseContext
+}
+
+// Expected data from form
+struct ProposeData: Content {
+    let title: String
+    let description: String
+    let link: String
+}
+
+//
+struct ProposalContext: Encodable {
+    let baseContext: BaseContext
+    let proposal: Proposal
+    let user: User
 }
 
 // Index
