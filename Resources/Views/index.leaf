@@ -1,15 +1,10 @@
 #extend("base"):
     #export("content"):
-        <!-- 3 -->
-        #if(baseContext.isLoggedIn):
-            <ul>
-                #for(proposal in homepageProposals):
-                        <li>#(proposal.proposalTitle) by #(proposal.creatorUsername)</li>
-                #endfor
-            </ul>
-        #else:
-            <h1>Please login</h1>
-        #endif
+        <ul>
+            #for(proposal in homepageProposals):
+                    <li>#(proposal.proposalTitle) by #(proposal.creatorUsername)</li>
+            #endfor
+        </ul>
     #endexport
 #endextend
 
