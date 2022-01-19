@@ -5,6 +5,7 @@
 //  Created by Marlon Mueller Soppart on 1/15/22.
 //
 
+import Down
 import Vapor
 import Leaf
 
@@ -39,7 +40,8 @@ struct WebsiteController: RouteCollection {
         
         // TODO: handle logged in and not logged in
         let baseContext = BaseContext(title: "Proposal Details", isLoggedIn: false)
-        let context = ProposalContext(baseContext: baseContext, proposal: proposal, user: creator)
+        let down = Down(markdownString: proposal.markdown)
+        let context = ProposalContext(baseContext: baseContext, proposal: proposal, creator: creator, html: try down.toHTML())
         
         return try await req.view.render("proposal", context)
         
@@ -148,7 +150,9 @@ struct WebsiteController: RouteCollection {
         for combo in zipped {
             let proposalAndCreator = ProposalAndCreator(
                 proposalTitle: combo.0.title,
-                creatorUsername: combo.1.username
+                proposalId: combo.0.id!,
+                creatorUsername: combo.1.username,
+                creatorId: combo.1.id!
             )
             proposalAndCreators.append(proposalAndCreator)
         }
@@ -243,7 +247,8 @@ struct ProposeData: Content {
 struct ProposalContext: Encodable {
     let baseContext: BaseContext
     let proposal: Proposal
-    let user: User
+    let creator: User
+    let html: String
 }
 
 // Index
@@ -256,7 +261,9 @@ struct IndexContext: Encodable {
 // Index struct
 struct ProposalAndCreator: Encodable {
     let proposalTitle: String
+    let proposalId: UUID
     let creatorUsername: String
+    let creatorId: UUID
 }
 
 // Profile

@@ -3,11 +3,10 @@
     
       <h1>#(proposal.title)</h1>
       <h2>#(proposal.description)</h2>
-      <p>by #(user.username)</p>
+      <p>by #(creator.username)</p>
       
-      <p>#(proposal.markdown)</p>
+      <div style="background-color:#ededed;">#unsafeHTML(html)</div>
 
   #endexport
 #endextend
   
-
