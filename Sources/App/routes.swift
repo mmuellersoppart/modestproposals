@@ -3,9 +3,13 @@ import Vapor
 
 func routes(_ app: Application) throws {
 
+    // api routes
     try app.register(collection: UsersController())
-    try app.register(collection: WebsiteController())
     try app.register(collection: ProposalController())
+    
+    // website routes
+    try app.register(collection: WebsiteController())
+    try app.register(collection: AuthenticationWebsiteController())
     
     // Sanity Check Routes
 
