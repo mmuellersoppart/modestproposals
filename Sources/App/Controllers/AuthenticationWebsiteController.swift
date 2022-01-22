@@ -8,6 +8,7 @@
 import Foundation
 import Vapor
 
+// Handle displaying register, login, and logout display and actions. 
 struct AuthenticationWebsiteController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         routes.get("register", use: registerHandler)

@@ -24,6 +24,7 @@ struct WebsiteController: RouteCollection {
         basicAuthRoutes.post("propose", use: proposePostHandler)
         
         basicAuthRoutes.get("proposal", ":proposal_id", use: proposalHandler)
+        basicAuthRoutes.get("profile", ":user_id", "energy", use: profileEnergyHandler)
     }
     
     func proposalHandler(_ req: Request) async throws -> View {
@@ -39,16 +40,44 @@ struct WebsiteController: RouteCollection {
         return try await req.view.render("proposal", context)
         
     }
+  
+    func profileEnergyHandler(_ req: Request) async throws -> View {
         
-    func profileHandler(_ req: Request) async throws -> View {
         // must be logged in to logout
-        let user = try req.auth.require(User.self)
+        let currUser = req.auth.get(User.self)
+        
+        let userOfProfile = try await User.find(req.parameters.get("user_id"), on: req.db)!
+        
+        var isCurrUserProfile: Bool = false
+        if let currUser = currUser {
+            isCurrUserProfile = (currUser.id == userOfProfile.id)
+        }
+        
+        let baseProfileContext = BaseProfileContext(isCurrUserProfile: isCurrUserProfile, userOfProfile: userOfProfile)
         
         let baseContext = BaseContext(title: "Profile", isLoggedIn: true)
         
-        let context = ProfileContext(baseContext: baseContext, user: user)
+        let context = ProfileContext(baseContext: baseContext, baseProfileContext: baseProfileContext)
         
-        return try await req.view.render("user_profile", context)
+        return try await req.view.render("profile", context)
+    }
+    
+    func profileHandler(_ req: Request) async throws -> View {
+        
+        // must be logged in to logout
+        let currUser = try req.auth.require(User.self)
+        
+        let userOfProfile = try await User.find(req.parameters.get("user_id"), on: req.db)!
+        
+        let isCurrUserProfile = (currUser.id == userOfProfile.id)
+        
+        let baseProfileContext = BaseProfileContext(isCurrUserProfile: isCurrUserProfile, userOfProfile: userOfProfile)
+        
+        let baseContext = BaseContext(title: "Profile", isLoggedIn: true)
+        
+        let context = ProfileContext(baseContext: baseContext, baseProfileContext: baseProfileContext)
+        
+        return try await req.view.render("profile", context)
     }
     
     func proposeHandler(_ req: Request) async throws -> View {
@@ -169,11 +198,17 @@ struct ProposalAndCreator: Encodable {
 // Profile
 struct ProfileContext: Encodable {
     let baseContext: BaseContext
-    let user: User
+    let baseProfileContext: BaseProfileContext
 }
 
 // Context data needed on every page
 struct BaseContext: Encodable {
     let title: String
     let isLoggedIn: Bool
+}
+
+// Context data needed for each profile page
+struct BaseProfileContext: Encodable {
+    let isCurrUserProfile: Bool
+    let userOfProfile: User
 }
