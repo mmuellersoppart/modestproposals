@@ -8,13 +8,13 @@
 import Foundation
 import Vapor
 
-// Handle displaying register, login, and logout display and actions. 
+// Handle register, login, and logout display and actions.
 struct AuthenticationWebsiteController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
-        routes.get("register", use: registerHandler)
+        routes.get("register", use: registerRenderer)
         routes.post("register", use: registerPostHandler)
         
-        routes.get("login", use: loginHandler)
+        routes.get("login", use: loginRenderer)
         
         let basicAuthRoutes = routes.grouped(
             User.credentialsAuthenticator()
@@ -25,7 +25,7 @@ struct AuthenticationWebsiteController: RouteCollection {
     }
     
     /// Renders registration page
-    func registerHandler(_ req: Request) async throws -> View {
+    func registerRenderer(_ req: Request) async throws -> View {
         
         let baseContext = BaseContext(title: "Register", isLoggedIn: false)
         let context = RegisterContext(baseContext: baseContext)
@@ -57,7 +57,7 @@ struct AuthenticationWebsiteController: RouteCollection {
     }
     
     /// renders login page
-    func loginHandler(_ req: Request) async throws -> View {
+    func loginRenderer(_ req: Request) async throws -> View {
         let baseContext = BaseContext(title: "Login", isLoggedIn: false)
         let context: LoginContext
         

@@ -1,6 +1,7 @@
 
 import Vapor
 
+// Proposals Api
 struct ProposalController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let proposalRoutes = routes.grouped("api", "proposals")

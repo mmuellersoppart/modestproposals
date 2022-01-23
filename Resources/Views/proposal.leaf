@@ -1,12 +1,14 @@
 #extend("base"):
-  #export("content"):
-    
-      <h1>#(proposal.title)</h1>
-      <h2>#(proposal.description)</h2>
-      <p>by #(creator.username)</p>
-      
-      <div style="background-color:#ededed;">#unsafeHTML(html)</div>
+#export("content"):
 
-  #endexport
+    <h1>#(proposal.title)</h1>
+    <h2>#(proposal.description)</h2>
+    <p>by #(creator.username)</p>
+
+    <div style="background-color:#ededed;">
+        #unsafeHTML(html)
+    </div>
+
+#endexport
 #endextend
-  
+

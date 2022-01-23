@@ -7,6 +7,7 @@
 
 import Vapor
 
+/// User Api
 struct UsersController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let basicAuthMiddleware = User.authenticator()

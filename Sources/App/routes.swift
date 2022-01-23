@@ -10,6 +10,7 @@ func routes(_ app: Application) throws {
     // website routes
     try app.register(collection: WebsiteController())
     try app.register(collection: AuthenticationWebsiteController())
+    try app.register(collection: ProfileWebsiteController())
     
     // Sanity Check Routes
 
