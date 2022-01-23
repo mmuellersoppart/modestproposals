@@ -28,11 +28,13 @@ struct WebsiteController: RouteCollection {
     
     func proposalHandler(_ req: Request) async throws -> View {
       
+        let user = req.auth.get(User.self)
+        
         let proposal: Proposal = try await Proposal.find(req.parameters.get("proposal_id"), on: req.db)!
         let creator = try await User.find(proposal.$user.id, on: req.db)!
         
         // TODO: handle logged in and not logged in
-        let baseContext = BaseContext(title: "Proposal Details", isLoggedIn: false)
+        let baseContext = BaseContext(title: "Proposal Details", isLoggedIn: (user != nil), currentPage: nil)
         let down = Down(markdownString: proposal.markdown)
         let context = ProposalContext(baseContext: baseContext, proposal: proposal, creator: creator, html: try down.toHTML())
         
@@ -44,7 +46,7 @@ struct WebsiteController: RouteCollection {
         
         let user = try req.auth.require(User.self)
         
-        let baseContext = BaseContext(title: "Propose", isLoggedIn: true)
+        let baseContext = BaseContext(title: "Propose", isLoggedIn: true, currentPage: MainPages.propose.rawValue)
         let context = ProposeContext(baseContext: baseContext)
         
         return try await req.view.render("propose", context)
@@ -111,7 +113,7 @@ struct WebsiteController: RouteCollection {
             proposalAndCreators.append(proposalAndCreator)
         }
         
-        let baseContext = BaseContext(title: "Homepage", isLoggedIn: isLoggedIn)
+        let baseContext = BaseContext(title: "Homepage", isLoggedIn: isLoggedIn, currentPage: MainPages.home.rawValue)
         
         let context = IndexContext(baseContext: baseContext, homepageProposals: proposalAndCreators
         )
@@ -119,6 +121,14 @@ struct WebsiteController: RouteCollection {
         return try await req.view.render("index", context)
     }
 }
+
+// Context data needed on every page
+struct BaseContext: Encodable {
+    let title: String
+    let isLoggedIn: Bool
+    let currentPage: Int?
+}
+
 
 // Propose
 struct ProposeContext: Encodable {
@@ -153,10 +163,4 @@ struct ProposalAndCreator: Encodable {
     let proposalId: UUID
     let creatorUsername: String
     let creatorId: UUID
-}
-
-// Context data needed on every page
-struct BaseContext: Encodable {
-    let title: String
-    let isLoggedIn: Bool
 }

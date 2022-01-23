@@ -26,15 +26,20 @@ struct ProfileWebsiteController: RouteCollection {
         let userOfProfile = try await User.find(req.parameters.get("user_id"), on: req.db)!
         
         var isCurrUserProfile: Bool = false
+        var currentPage: Int? = nil
         if let currUser = currUser {
             isCurrUserProfile = (currUser.id == userOfProfile.id)
+            if isCurrUserProfile {
+                currentPage = MainPages.profile.rawValue
+            }
         }
         
         let baseProfileContext = BaseProfileContext(isCurrUserProfile: isCurrUserProfile, userOfProfile: userOfProfile)
         
         let baseContext = BaseContext(
             title: "Profile",
-            isLoggedIn: (currUser != nil)
+            isLoggedIn: (currUser != nil),
+            currentPage: currentPage
         )
         
         let context = ProfileContext(baseContext: baseContext, baseProfileContext: baseProfileContext)
@@ -47,15 +52,12 @@ struct ProfileWebsiteController: RouteCollection {
         // must be logged in to logout
         let currUser = try req.auth.require(User.self)
         
-        let userOfProfile = try await User.find(req.parameters.get("user_id"), on: req.db)!
-        
-        let isCurrUserProfile = (currUser.id == userOfProfile.id)
-        
-        let baseProfileContext = BaseProfileContext(isCurrUserProfile: isCurrUserProfile, userOfProfile: userOfProfile)
+        let baseProfileContext = BaseProfileContext(isCurrUserProfile: true, userOfProfile: currUser)
         
         let baseContext = BaseContext(
             title: "Profile",
-            isLoggedIn: true
+            isLoggedIn: true,
+            currentPage: MainPages.profile.rawValue
         )
         
         let context = ProfileContext(baseContext: baseContext, baseProfileContext: baseProfileContext)

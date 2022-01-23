@@ -14,7 +14,13 @@
     <!-- 1. Add a navbar to each page. -->
     <nav class="navbar navbar-expand-md navbar-light border border-dark" style="background-color: #ffffff;">
       <!-- 2 -->
-      <a class="navbar-brand" href="/">modestproposals.net</a>
+      <a class="navbar-brand" href="/">
+          #if(baseContext.currentPage == 0):
+            <b>modestproposals.net</b>
+          #else:
+            modestproposals.net
+          #endif
+      </a>
       <!-- 3 -->
       <button class="navbar-toggler" type="button"
       data-toggle="collapse" data-target="\#navbarSupportedContent"
@@ -30,22 +36,52 @@
           <!-- 6 -->
           #if(!baseContext.isLoggedIn):
               <li class="nav-item">
-                  <a href="/register" class="nav-link">Register</a>
+                  <a href="/register" class="nav-link">
+                      #if(baseContext.currentPage == 4):
+                        <b>Register</b>
+                      #else:
+                        Register
+                      #endif
+                  </a>
               </li>
               
               <li class="nav-item
                 #if(title == "Home page"): active #endif">
-                  <a href="/login" class="nav-link">Login</a>
+                  <a href="/login" class="nav-link">
+                      #if(baseContext.currentPage == 5):
+                        <b>Login</b>
+                      #else:
+                        Login
+                      #endif
+                  </a>
               </li>
           #else:
               <li class="nav-item">
-                  <a href="/propose" class="nav-link">Propose</a>
+                  <a href="/propose" class="nav-link">
+                      #if(baseContext.currentPage == 1):
+                        <b>Propose</b>
+                      #else:
+                        Propose
+                      #endif
+                  </a>
               </li>
               <li class="nav-item">
-                  <a href="/profile" class="nav-link">Profile</a>
+                  <a href="/profile" class="nav-link">
+                      #if(baseContext.currentPage == 2):
+                        <b>Profile</b>
+                      #else:
+                        Profile
+                      #endif
+                  </a>
               </li>
               <li class="nav-item">
-                  <a href="/" class="nav-link">About</a>
+                  <a href="/" class="nav-link">
+                      #if(baseContext.currentPage == 3):
+                        <b>About</b>
+                      #else:
+                        About
+                      #endif
+                  </a>
               </li>
           #endif
         </ul>
