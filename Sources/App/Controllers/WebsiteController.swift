@@ -44,7 +44,7 @@ struct WebsiteController: RouteCollection {
     
     func proposeHandler(_ req: Request) async throws -> View {
         
-        let user = try req.auth.require(User.self)
+        let _ = try req.auth.require(User.self)
         
         let baseContext = BaseContext(title: "Propose", isLoggedIn: true, currentPage: MainPages.propose.rawValue)
         let context = ProposeContext(baseContext: baseContext)
@@ -55,7 +55,7 @@ struct WebsiteController: RouteCollection {
     func proposePostHandler(_ req: Request) async throws -> Response {
         
         let user = try req.auth.require(User.self)
-        let data = try req.content.decode(ProposeData.self)
+        let data = try req.content.decode(ProposeDTO.self)
         
         // get data from link
         let link = data.link
@@ -88,6 +88,7 @@ struct WebsiteController: RouteCollection {
         return req.redirect(to: "/")
     }
     
+    /// Homepage handler
     func indexHandler(_ req: Request) async throws -> View {
         
         let isLoggedIn = req.auth.has(User.self)
@@ -130,19 +131,19 @@ struct BaseContext: Encodable {
 }
 
 
-// Propose
+// Final information needed to render propose page
 struct ProposeContext: Encodable {
     let baseContext: BaseContext
 }
 
 // Expected data from form
-struct ProposeData: Content {
+struct ProposeDTO: Content {
     let title: String
     let description: String
     let link: String
 }
 
-//
+// Information necessary to render proposals pages
 struct ProposalContext: Encodable {
     let baseContext: BaseContext
     let proposal: Proposal
@@ -150,7 +151,7 @@ struct ProposalContext: Encodable {
     let html: String
 }
 
-// Index
+// Information necessary for the homepage
 struct IndexContext: Encodable {
     let baseContext: BaseContext
     
