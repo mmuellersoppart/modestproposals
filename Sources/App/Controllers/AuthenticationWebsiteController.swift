@@ -27,7 +27,7 @@ struct AuthenticationWebsiteController: RouteCollection {
     /// Renders registration page
     func registerRenderer(_ req: Request) async throws -> View {
         
-        let baseContext = BaseContext(title: "Register", isLoggedIn: false, currentPage: MainPages.register.rawValue)
+        let baseContext = BaseContext(title: "Register", isLoggedIn: false, isPage: IsPage(register: true))
         let context = RegisterContext(baseContext: baseContext)
         
         return try await req.view.render("register", context)
@@ -58,7 +58,7 @@ struct AuthenticationWebsiteController: RouteCollection {
     
     /// renders login page
     func loginRenderer(_ req: Request) async throws -> View {
-        let baseContext = BaseContext(title: "Login", isLoggedIn: false, currentPage: MainPages.login.rawValue)
+        let baseContext = BaseContext(title: "Login", isLoggedIn: false, isPage: IsPage(login: true))
         let context: LoginContext
         
         // if error exist, a notification will appear on screen telling
@@ -81,7 +81,7 @@ struct AuthenticationWebsiteController: RouteCollection {
             return req.redirect(to: "/")
         } catch {
             // user is not in the system, so we send an error in the context
-            let baseContext = BaseContext(title: "Login", isLoggedIn: false, currentPage: nil)
+            let baseContext = BaseContext(title: "Login", isLoggedIn: false, isPage: IsPage())
             let context = LoginContext(baseContext: baseContext, loginError: true)
             return try await req.view.render("login", context).encodeResponse(for: req)
         }

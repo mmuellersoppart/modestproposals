@@ -16,3 +16,28 @@ enum MainPages: Int {
     case register = 4
     case login = 5
 }
+
+struct IsPage : Encodable {
+    let home: Bool
+    let propose: Bool
+    let profile: Bool
+    let about: Bool
+    let register: Bool
+    let login: Bool
+    
+    init(
+        home: Bool = false,
+        propose: Bool = false,
+        profile: Bool = false,
+        about: Bool = false,
+        register: Bool = false,
+        login: Bool = false
+    ){
+        self.home = home
+        self.propose = propose
+        self.profile = profile
+        self.about = about
+        self.register = register
+        self.login = login
+    }
+}

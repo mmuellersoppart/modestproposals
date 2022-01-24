@@ -34,7 +34,7 @@ struct WebsiteController: RouteCollection {
         let creator = try await User.find(proposal.$user.id, on: req.db)!
         
         // TODO: handle logged in and not logged in
-        let baseContext = BaseContext(title: "Proposal Details", isLoggedIn: (user != nil), currentPage: nil)
+        let baseContext = BaseContext(title: "Proposal Details", isLoggedIn: (user != nil), isPage: IsPage())
         let down = Down(markdownString: proposal.markdown)
         let context = ProposalContext(baseContext: baseContext, proposal: proposal, creator: creator, html: try down.toHTML())
         
@@ -46,7 +46,7 @@ struct WebsiteController: RouteCollection {
         
         let _ = try req.auth.require(User.self)
         
-        let baseContext = BaseContext(title: "Propose", isLoggedIn: true, currentPage: MainPages.propose.rawValue)
+        let baseContext = BaseContext(title: "Propose", isLoggedIn: true, isPage: IsPage(propose: true))
         let context = ProposeContext(baseContext: baseContext)
         
         return try await req.view.render("propose", context)
@@ -114,7 +114,7 @@ struct WebsiteController: RouteCollection {
             proposalAndCreators.append(proposalAndCreator)
         }
         
-        let baseContext = BaseContext(title: "Homepage", isLoggedIn: isLoggedIn, currentPage: MainPages.home.rawValue)
+        let baseContext = BaseContext(title: "Homepage", isLoggedIn: isLoggedIn, isPage: IsPage(home: true))
         
         let context = IndexContext(baseContext: baseContext, homepageProposals: proposalAndCreators
         )
@@ -127,7 +127,7 @@ struct WebsiteController: RouteCollection {
 struct BaseContext: Encodable {
     let title: String
     let isLoggedIn: Bool
-    let currentPage: Int?
+    let isPage: IsPage
 }
 
 

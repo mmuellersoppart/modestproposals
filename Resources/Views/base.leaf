@@ -15,7 +15,7 @@
     <nav class="navbar navbar-expand-md navbar-light border border-dark" style="background-color: #ffffff;">
       <!-- 2 -->
       <a class="navbar-brand" href="/">
-          #if(baseContext.currentPage == 0):
+          #if(baseContext.isPage.home):
             <b>modestproposals.net</b>
           #else:
             modestproposals.net
@@ -37,7 +37,7 @@
           #if(!baseContext.isLoggedIn):
               <li class="nav-item">
                   <a href="/register" class="nav-link">
-                      #if(baseContext.currentPage == 4):
+                      #if(baseContext.isPage.register):
                         <b>Register</b>
                       #else:
                         Register
@@ -48,7 +48,7 @@
               <li class="nav-item
                 #if(title == "Home page"): active #endif">
                   <a href="/login" class="nav-link">
-                      #if(baseContext.currentPage == 5):
+                      #if(baseContext.isPage.login):
                         <b>Login</b>
                       #else:
                         Login
@@ -58,7 +58,7 @@
           #else:
               <li class="nav-item">
                   <a href="/propose" class="nav-link">
-                      #if(baseContext.currentPage == 1):
+                      #if(baseContext.isPage.propose):
                         <b>Propose</b>
                       #else:
                         Propose
@@ -67,7 +67,7 @@
               </li>
               <li class="nav-item">
                   <a href="/profile" class="nav-link">
-                      #if(baseContext.currentPage == 2):
+                      #if(baseContext.isPage.profile):
                         <b>Profile</b>
                       #else:
                         Profile
@@ -76,7 +76,7 @@
               </li>
               <li class="nav-item">
                   <a href="/" class="nav-link">
-                      #if(baseContext.currentPage == 3):
+                      #if(baseContext.isPage.about):
                         <b>About</b>
                       #else:
                         About

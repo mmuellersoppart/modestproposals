@@ -26,12 +26,8 @@ struct ProfileWebsiteController: RouteCollection {
         let userOfProfile = try await User.find(req.parameters.get("user_id"), on: req.db)!
         
         var isCurrUserProfile: Bool = false
-        var currentPage: Int? = nil
         if let currUser = currUser {
             isCurrUserProfile = (currUser.id == userOfProfile.id)
-            if isCurrUserProfile {
-                currentPage = MainPages.profile.rawValue
-            }
         }
         
         let baseProfileContext = BaseProfileContext(isCurrUserProfile: isCurrUserProfile, userOfProfile: userOfProfile)
@@ -39,7 +35,7 @@ struct ProfileWebsiteController: RouteCollection {
         let baseContext = BaseContext(
             title: "Profile",
             isLoggedIn: (currUser != nil),
-            currentPage: currentPage
+            isPage: IsPage(profile: isCurrUserProfile)
         )
         
         let context = ProfileContext(baseContext: baseContext, baseProfileContext: baseProfileContext)
@@ -57,7 +53,7 @@ struct ProfileWebsiteController: RouteCollection {
         let baseContext = BaseContext(
             title: "Profile",
             isLoggedIn: true,
-            currentPage: MainPages.profile.rawValue
+            isPage: IsPage(profile: true)
         )
         
         let context = ProfileContext(baseContext: baseContext, baseProfileContext: baseProfileContext)
