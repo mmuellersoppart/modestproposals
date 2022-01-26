@@ -20,7 +20,7 @@ struct WebsiteController: RouteCollection {
         )
         
         basicAuthRoutes.get("propose", use: proposeHandler)
-        basicAuthRoutes.post("propose", use: proposePostHandler)
+        basicAuthRoutes.post("propose", use: ProposalController().createProposalHandler)
         
         basicAuthRoutes.get("proposal", ":proposal_id", use: proposalHandler)
         
