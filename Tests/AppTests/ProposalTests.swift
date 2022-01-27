@@ -23,8 +23,7 @@ final class ProposalTests: XCTestCase {
     }
     
     func testUsersCanBeRetrievedFromAPI() async throws {
-        let user = try await User.create(email: "email1@mail.com", username: "u1", password: "password1", on: app.db)
-        _ = try await User.create(email: "email2@mail.com", username: "u2", password: "password2", on: app.db)
+        let user = try await User.create(email: "u1@m.com", username: "u1", password: "u1", on: app.db)
         
         try app.test(.GET, proposalURI, afterResponse: { response in
             XCTAssertEqual(response.status, .ok)

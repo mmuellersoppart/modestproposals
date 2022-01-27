@@ -22,3 +22,18 @@ extension User {
         return user
     }
 }
+
+/// I don't think this'll ever be used
+extension Proposal {
+    static func create(
+        title: String = "test title",
+        description: String = "test description",
+        user: User,
+        link: String,
+        on database: Database
+    ) async throws -> Proposal {
+        let proposal = Proposal(id: UUID(), userID: user.id!, title: title, description: description, link: link, markdown: "")
+        try await proposal.save(on: database)
+        return proposal
+    }
+}
