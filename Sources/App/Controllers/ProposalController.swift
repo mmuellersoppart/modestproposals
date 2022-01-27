@@ -60,7 +60,7 @@ struct ProposalController: RouteCollection {
         
         try await proposal.save(on: req.db)
    
-        return try await req.redirect(to: "/").encodeResponse(for: req)
+        return try await proposal.encodeResponse(for: req)
     }
 }
 
