@@ -56,5 +56,5 @@ final class Proposal: Model, Content {
         self.link = link
         self.energy = energy
     }
-    
+
 }

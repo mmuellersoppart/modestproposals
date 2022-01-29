@@ -33,10 +33,12 @@ struct WebsiteController: RouteCollection {
         let proposal: Proposal = try await Proposal.find(req.parameters.get("proposal_id"), on: req.db)!
         let creator = try await User.find(proposal.$user.id, on: req.db)!
         
+        let link = proposal.link
+        let embedLink = try linkToEmbeddedLink(link: link)
+        
         // TODO: handle logged in and not logged in
         let baseContext = BaseContext(title: "Proposal Details", isLoggedIn: (user != nil), isPage: IsPage())
-        let down = Down(markdownString: proposal.markdown)
-        let context = ProposalContext(baseContext: baseContext, proposal: proposal, creator: creator, html: try down.toHTML())
+        let context = ProposalContext(baseContext: baseContext, proposal: proposal, creator: creator, link: embedLink)
         
         return try await req.view.render("proposal", context)
         
@@ -57,51 +59,12 @@ struct WebsiteController: RouteCollection {
         let user = try req.auth.require(User.self)
         let data = try req.content.decode(ProposeDTO.self)
         
-        
         let link = data.link
-        
-        // convert link to url
-        let url = URL(string: link)
-        guard let url = url else {
-            throw Abort(.notAcceptable, reason: "Link submitted is unacceptable. It cannot to a url.")
-        }
-        
-        // make sure link is from github gist
-        let hostInfo = url.host
-        let hostComponents = hostInfo?.components(separatedBy: ".")
-        
-        // check from right website
-        guard hostComponents == ["gist", "githubusercontent", "com"] else {
-            throw Abort(.unprocessableEntity, reason: "Link submitted is from an invalid website. Only github gist links are accepted. See tutorial below.")
-        }
-        
-        // check that we are getting a .md file
-        let urlFile = url.lastPathComponent.components(separatedBy: ".")
-        guard urlFile[1] == "md" else {
-            throw Abort(.unprocessableEntity, reason: "Link submitted isn't a raw markdown file. See tutorial below.")
-        }
-        
-        let (url_data, response) = try await URLSession.shared.data(from: url)
-    
-        // see if response is good
-        guard let httpRequest = response as? HTTPURLResponse,
-              httpRequest.statusCode == 200 else {
-                  // throw error
-                  // TODO: handle error
-                  throw Abort(.badRequest, reason: "Url session failed to retreive data from link.")
-              }
-        
-        // check if file data is good
-        guard let markdown = String(data: url_data, encoding: .utf8) else {
-            // throw error
-            // TODO: do better
-            throw Abort(.processing, reason: "url data could not be decoded to a string.")
-        }
+        let markdown = try await linkToMarkdown(link: link)
         
         let proposal = Proposal(id: UUID(), userID: user.id!, title: data.title, description: data.description, link: data.link, markdown: markdown)
         
         try await proposal.save(on: req.db)
-   
    
         return req.redirect(to: "/")
     }
@@ -166,7 +129,7 @@ struct ProposalContext: Encodable {
     let baseContext: BaseContext
     let proposal: Proposal
     let creator: User
-    let html: String
+    let link: String
 }
 
 // Information necessary for the homepage

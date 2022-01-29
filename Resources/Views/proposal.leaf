@@ -5,8 +5,8 @@
     <h2>#(proposal.description)</h2>
     <p>by #(creator.username)</p>
 
-    <div style="background-color:#ededed;">
-        #unsafeHTML(html)
+    <div>
+        <script src=#(link)></script>
     </div>
 
 #endexport

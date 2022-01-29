@@ -2,7 +2,15 @@
     #export("content"):
         <ul>
             #for(proposal in homepageProposals):
-                    <li><a href="/proposal/#(proposal.proposalId)">#(proposal.proposalTitle)</a> by <a href="/profile/#(proposal.creatorId)/energy">#(proposal.creatorUsername)</a></li>
+                    <li>
+                        <a href="/proposal/#(proposal.proposalId)">
+                            #(proposal.proposalTitle)
+                        </a>
+                        by
+                        <a href="/profile/#(proposal.creatorId)/energy">
+                            #(proposal.creatorUsername)
+                        </a>
+                    </li>
             #endfor
         </ul>
     #endexport
