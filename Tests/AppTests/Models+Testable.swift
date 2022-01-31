@@ -29,11 +29,10 @@ extension Proposal {
         title: String = "test title",
         description: String = "test description",
         user: User,
-        link: String,
-        markdown: String,
+        proposal: String,
         on database: Database
     ) async throws -> Proposal {
-        let proposal = Proposal(id: UUID(), userID: user.id!, title: title, description: description, link: link, markdown: markdown)
+        let proposal = Proposal(id: UUID(), userID: user.id!, title: title, description: description, proposal: proposal)
         try await proposal.save(on: database)
         return proposal
     }

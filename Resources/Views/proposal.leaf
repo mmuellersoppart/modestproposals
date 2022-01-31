@@ -9,6 +9,10 @@
         <script src=#(link)></script>
     </div>
 
+    <div>
+        #unsafeHTML(html)
+    </div>
+
 #endexport
 #endextend
 

@@ -16,9 +16,8 @@
         </div>
 
         <div class="form-group">
-            <label for="password">Link</label>
-            <input type="text" name="link"
-            class="form-control" id="link"/>
+            <label for="proposal">Proposal</label>
+            <textarea id="proposal" name="proposal" class="form-control"></textarea>
         </div>
 
         <button type="submit" class="btn btn-primary">

@@ -33,12 +33,12 @@ struct WebsiteController: RouteCollection {
         let proposal: Proposal = try await Proposal.find(req.parameters.get("proposal_id"), on: req.db)!
         let creator = try await User.find(proposal.$user.id, on: req.db)!
         
-        let link = proposal.link
-        let embedLink = try linkToEmbeddedLink(link: link)
+        let markdown = proposal.proposal
+        let down = Down(markdownString: markdown)
         
         // TODO: handle logged in and not logged in
         let baseContext = BaseContext(title: "Proposal Details", isLoggedIn: (user != nil), isPage: IsPage())
-        let context = ProposalContext(baseContext: baseContext, proposal: proposal, creator: creator, link: embedLink)
+        let context = ProposalContext(baseContext: baseContext, proposal: proposal, creator: creator, html: try down.toHTML())
         
         return try await req.view.render("proposal", context)
         
@@ -59,10 +59,7 @@ struct WebsiteController: RouteCollection {
         let user = try req.auth.require(User.self)
         let data = try req.content.decode(ProposeDTO.self)
         
-        let link = data.link
-        let markdown = try await linkToMarkdown(link: link)
-        
-        let proposal = Proposal(id: UUID(), userID: user.id!, title: data.title, description: data.description, link: data.link, markdown: markdown)
+        let proposal = Proposal(id: UUID(), userID: user.id!, title: data.title, description: data.description, proposal: data.proposal)
         
         try await proposal.save(on: req.db)
    
@@ -121,7 +118,7 @@ struct ProposeContext: Encodable {
 struct ProposeDTO: Content {
     let title: String
     let description: String
-    let link: String
+    let proposal: String
 }
 
 // Information necessary to render proposals pages
@@ -129,7 +126,7 @@ struct ProposalContext: Encodable {
     let baseContext: BaseContext
     let proposal: Proposal
     let creator: User
-    let link: String
+    let html: String // markdown or plain text
 }
 
 // Information necessary for the homepage

@@ -24,11 +24,8 @@ final class Proposal: Model, Content {
     @Field(key: "description")
     var description: String
     
-    @Field(key: "link")
-    var link: String
-    
-    @Field(key: "markdown")
-    var markdown: String
+    @Field(key: "proposal")
+    var proposal: String
     
     @Field(key: "energy")
     var energy: Int
@@ -43,8 +40,7 @@ final class Proposal: Model, Content {
         userID: User.IDValue,
         title: String,
         description: String,
-        link: String,
-        markdown: String,
+        proposal: String,  // markdown
         energy: Int = 0,
         date_created: Date = Date()
     ) {
@@ -52,8 +48,7 @@ final class Proposal: Model, Content {
         self.$user.id = userID
         self.title = title
         self.description = description
-        self.markdown = markdown
-        self.link = link
+        self.proposal = proposal
         self.energy = energy
     }
 
