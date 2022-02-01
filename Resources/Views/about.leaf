@@ -1,0 +1,69 @@
+#extend("base"):
+#export("content"):
+
+    <h1>Free thinking needs a free space.</h1>
+    <p>by mmuellersoppart</p>
+
+    <div class="row">
+
+        <div class="col-xl pt-3 my-3 border" >
+            <p>#webdev #proposals #persuasion #ideas #sustainability #energy #networks #graphs #communitydetection </p>
+            <h1 id="modestproposals-net">modestproposals.net</h1>
+            <h2 id="overview">Overview</h2>
+            <p>modestproposals.net is a website that transmits ideas in a competitive and con​sci​en​tious​ way. Free thinking needs a free environment. Most online platforms rely on systems that incentivize short production timelines and money generation. On top of that, internal algorithms decide which people see which content. It’s entirely possible that these companies are working tirelessly to get the right info to the right people. If I am permitted one paranoid thought, may I suggest that the algorithms may be interested in shaping people too, an idea pioneered largely by advertisers, the same people who fund most online activity. We are what we think after all. </p>
+            <p>To combat this, modestproposals.net is designed to be small and manageable. With a low enough memory usage and limited incoming server requests, one person can afford the server costs, so money is largely removed from the equation. This is no small feat to accomplish, however. Everything extraneous needs to be removed, so no needless data is shlepped around. Rules must be created on the intake and deletion of data. Also, the design should keep number of clicks and interactions as minimal as possible. These constraints, I hope, will give people more autonomy in ideas they see, share, and promote. </p>
+            <h2 id="the-rules">The Rules</h2>
+            <p>Modestproposals.net is a website where anyone can share proposals, which are ideas worth thinking about. </p>
+            <ul>
+                <li>The website updates monthly, new proposals are added to personal “dockets” and the homepage. </li>
+                <li>A report’s weight/staying power is based on its energy count. </li>
+                <li>Each user has five energies to give each month. </li>
+                <li>The homepage — the public page displaying the best ideas — has a max of 100 proposals. <ul>
+                <li>New proposals will only make it on the homepage if they have received more energy than min (homepageenergies). </li>
+            </ul>
+            </li>
+            <li>A user can submit a proposal once a month. <ul>
+            <li>The proposal is sent to a random, small subset of the users’ “dockets“ where they may choose to give it energy. </li>
+            </ul>
+            </li>
+            <li>There’s a maximum of 1000 users. <ul>
+            <li>If a user does not clear their docket for one month, their account deactivates, meaning the energies they’ve allocated are returned to their inventory. </li>
+            <li>If a user doesn’t login after a year, the account will be deleted. The user will be given notice of termination a month advance.  </li>
+            </ul>
+            </li>
+            </ul>
+            <p>All rules/algorithms will be posted on the about page. </p>
+            <p>The rules put you in control. You’ll carefully allocate your five energies each month, so your favorite ideas stay or get added to the homepage, and irrelevance is pruned away. This way the website sustainably focuses on the most popular ideas. </p>
+            <p>This decision making can be taxing. Every action on the website also drains on the planet. The internet’s share of electricity generated has grown <a href="https://www.nature.com/articles/d41586-018-06610-y">exponentially</a>. Modestproposals.net’s structure is designed to minimize server activity and interactions with users to reduce its impact on the web. </p>
+            <p>Modestproposals.net’s rules/algorithms will be open source and simple. You know you are seeing a proposal because the community of users decided it was the best argued proposal, not because the site thinks you’ll like it or the advertisers want you to like it. This openness gives users more agency in the online space they inhabit. </p>
+            <h2 id="additional-features">Additional Features</h2>
+            <h3 id="factions">Factions</h3>
+            <p>Users will be defined by their name, profile color choice (9 different colors), and the five ideas they gave energy to. Energy is interesting because with that information different proposals can be associated together. Using a community detection algorithm, ideas and people can be grouped together. Here is a super small example. We have three people and the proposal numbers they gave energy to. </p>
+            <pre><code>
+            p1 = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">17</span>, <span class="hljs-number">32</span>, <span class="hljs-number">36</span>]
+            p2 = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">24</span>, <span class="hljs-number">31</span>, <span class="hljs-number">77</span>]
+            p3 = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">17</span>, <span class="hljs-number">102</span>, <span class="hljs-number">177</span>]
+            </code></pre>
+            <p>In this example, proposals 1, 2, and 17 have strong bonds. Three different users selected the same proposals to use their limited share of energy. The specifics of this algorithm need to be worked out (should a proposal be part of multiple clusters?), but it&#39;s fair to say there&#39;s something going on between 1, 2, and 17, whereas all the other proposals are islands. </p>
+            <p>The clusters of ideas give insights into the audience of the platform and where the user fits within it. It&#39;s another way to navigate the proposals on the homepage. As the screenshots show below, it could result in a pretty image that mirrors the user&#39;s profile design. </p>
+            <h2 id="mockups">Mockups</h2>
+            <h3 id="homepage-navigate-with-key-strokes-">Homepage (navigate with key strokes)</h3>
+            <p><img src="https://user-images.githubusercontent.com/16762461/146649421-550266e5-d017-410c-92b4-0683280b8dcb.png" alt="home"></p>
+            <h3 id="homepage-list-view-">Homepage (list view)</h3>
+            <p><img src="https://user-images.githubusercontent.com/16762461/146649417-83088307-8899-4181-a59e-f19cc692ccd1.png" alt="home_list"></p>
+            <h3 id="the-proposal-page-live-updates-next-to-satellite-">The proposal page (live updates next to satellite)</h3>
+            <p><img src="https://user-images.githubusercontent.com/16762461/146649410-6999183a-b9d2-41c8-8c6e-c5933403ae36.png" alt="proposal_page"></p>
+            <h3 id="the-proposal-form">The proposal form</h3>
+            <p><img src="https://user-images.githubusercontent.com/16762461/146649405-10bab526-a126-4b74-83d4-c70295d032b4.png" alt="propose"></p>
+            <h3 id="user-profile">User Profile</h3>
+            <p><img src="https://user-images.githubusercontent.com/16762461/146649412-51dae9fd-cc21-44dd-bca6-2b70b48d2979.png" alt="profile_energy"></p>
+            <h3 id="faction">Faction</h3>
+            <p><img src="https://user-images.githubusercontent.com/16762461/146649426-11821704-3a64-4197-aa50-b23115ff563d.png" alt="Factions"></p>
+                    </div>
+                    <div class="col"></div>
+    </div>
+
+#endexport
+#endextend
+
+

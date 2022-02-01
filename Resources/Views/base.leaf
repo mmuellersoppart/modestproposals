@@ -80,16 +80,16 @@
                       #endif
                   </a>
               </li>
-              <li class="nav-item">
-                  <a href="/" class="nav-link">
-                      #if(baseContext.isPage.about):
+          #endif
+            <li class="nav-item">
+                <a href="/about" class="nav-link">
+                    #if(baseContext.isPage.about):
                         <b>About</b>
-                      #else:
+                    #else:
                         About
-                      #endif
+                    #endif
                   </a>
               </li>
-          #endif
         </ul>
       </div>
     </nav>

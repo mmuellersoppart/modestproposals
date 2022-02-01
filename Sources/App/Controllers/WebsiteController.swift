@@ -14,6 +14,7 @@ struct WebsiteController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         
         routes.get(use: indexHandler)
+        routes.get("about", use: aboutHandler)
         
         let basicAuthRoutes = routes.grouped(
             User.credentialsAuthenticator()
@@ -99,6 +100,18 @@ struct WebsiteController: RouteCollection {
 
         return try await req.view.render("index", context)
     }
+    
+    /// Render about page
+    func aboutHandler(_ req: Request) async throws -> View {
+        
+        let isLoggedIn = req.auth.has(User.self)
+        
+        let baseContext = BaseContext(title: "About", isLoggedIn: isLoggedIn, isPage: IsPage(about: true))
+        
+        let context = AboutContext(baseContext: baseContext)
+        
+        return try await req.view.render("about", context)
+    }
 }
 
 // Context data needed on every page
@@ -132,7 +145,6 @@ struct ProposalContext: Encodable {
 // Information necessary for the homepage
 struct IndexContext: Encodable {
     let baseContext: BaseContext
-    
     let homepageProposals: [ProposalAndCreator]
 }
 
@@ -142,4 +154,9 @@ struct ProposalAndCreator: Encodable {
     let proposalId: UUID
     let creatorUsername: String
     let creatorId: UUID
+}
+
+// Information necessary to render the about page
+struct AboutContext: Encodable {
+    let baseContext: BaseContext
 }

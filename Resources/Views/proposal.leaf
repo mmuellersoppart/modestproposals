@@ -5,12 +5,12 @@
     <h2>#(proposal.description)</h2>
     <p>by #(creator.username)</p>
 
-    <div>
-        <script src=#(link)></script>
-    </div>
+    <div class="row">
 
-    <div class="container-sm pt-3 my-3 border" >
-        #unsafeHTML(html)
+        <div class="col-xl pt-3 my-3 border" >
+            #unsafeHTML(html)
+        </div>
+        <div class="col"></div>
     </div>
 
 #endexport
