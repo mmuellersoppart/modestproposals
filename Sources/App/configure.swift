@@ -51,10 +51,14 @@ public func configure(_ app: Application) throws {
     app.migrations.add(CreateAdminUser())
     app.migrations.add(CreateProposal())
 
+    // why we can send public files like css
+    let file = FileMiddleware(publicDirectory: app.directory.publicDirectory)
+    app.middleware.use(file)
+    
+    // allows website to talk to other websites
     let corsConfiguration = CORSMiddleware.Configuration(allowedOrigin: .all, allowedMethods: [.GET, .POST], allowedHeaders: [.accept, .contentType, .origin, .accessControlAllowOrigin, .authorization]
     )
     let cors = CORSMiddleware(configuration: corsConfiguration)
-    
     app.middleware.use(cors, at: .beginning)
     
     // using sessions
