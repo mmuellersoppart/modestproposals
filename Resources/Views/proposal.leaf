@@ -9,7 +9,7 @@
         <script src=#(link)></script>
     </div>
 
-    <div>
+    <div class="container-sm pt-3 my-3 border" >
         #unsafeHTML(html)
     </div>
 
