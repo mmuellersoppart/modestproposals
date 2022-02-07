@@ -30,15 +30,23 @@ struct WebsiteController: RouteCollection {
     func proposalHandler(_ req: Request) async throws -> View {
       
         let user = req.auth.get(User.self)
+        let isUserLoggedIn = (user != nil)
+        let baseContext = BaseContext(title: "Proposal Details", isLoggedIn: isUserLoggedIn, isPage: IsPage())
         
-        let proposal: Proposal = try await Proposal.find(req.parameters.get("proposal_id"), on: req.db)!
-        let creator = try await User.find(proposal.$user.id, on: req.db)!
+        guard let proposal: Proposal = try await Proposal.find(req.parameters.get("proposal_id"), on: req.db) else {
+            let context = ErrorContext(baseContext: baseContext)
+            return try await req.view.render("error", context)
+        }
+        
+        guard let creator = try await User.find(proposal.$user.id, on: req.db) else {
+            let context = ErrorContext(baseContext: baseContext)
+            return try await req.view.render("error", context)
+        }
         
         let markdown = proposal.proposal
         let down = Down(markdownString: markdown)
         
         // TODO: handle logged in and not logged in
-        let baseContext = BaseContext(title: "Proposal Details", isLoggedIn: (user != nil), isPage: IsPage())
         let context = ProposalContext(baseContext: baseContext, proposal: proposal, creator: creator, html: try down.toHTML())
         
         return try await req.view.render("proposal", context)
@@ -121,6 +129,9 @@ struct BaseContext: Encodable {
     let isPage: IsPage
 }
 
+struct ErrorContext: Encodable {
+    let baseContext: BaseContext
+}
 
 // Final information needed to render propose page
 struct ProposeContext: Encodable {
